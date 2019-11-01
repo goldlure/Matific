@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Matific Coding Challenge</title>
+		<link rel="stylesheet" href="styles.css" />
+	</head>
+	<body onload="startGame()">
+		<script src="main.js"></script>
+		<br />
+    <div style="text-align:center;width:600px;">
+      <br /><br />
+			<button
+				onmousedown="moveleft()"
+				onmouseup="clearmove()"
+				ontouchstart="moveleft()"
+			>
+				LEFT
+			</button>
+			<button
+				onmousedown="moveright()"
+				onmouseup="clearmove()"
+				ontouchstart="moveright()"
+			>
+        RIGHT</button>
+        <br /><br />
+			<button
+				onmousedown="stop()"
+				onmouseup="clearmove()"
+				ontouchstart="stop()"
+			>
+				STOP
+			</button>
+		</div>
+	</body>
+</html>
