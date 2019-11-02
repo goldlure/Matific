@@ -10,7 +10,16 @@ var myBoatHeight = 140;
 var myPlane;
 var myPlaneWidth = 145;
 var myParashutist;
+var myParashutists = [];
 var mySea;
+
+// time of the last object spawned
+var lastSpawn = -1;
+
+// start time (used to calc elapsed time)
+var startTime = Date.now();
+
+var randomTime = 0;
 
 //game's messages
 var myScore;
@@ -119,18 +128,10 @@ function startGame() {
 
     myPlane = new Plane(
         30, 30,
-        1000, 20,
+        900, 20,
         "resources/plane.png"
     );
     myComponents.push(myPlane);
-
-    myParashutist = new Parachutist(
-        30, 30,
-        1000, 20,
-        "resources/parachutist.png",
-        "image"
-    );
-    myComponents.push(myParashutist);
 
     myScore = new TextComponent("20px", "Consolas", 20, 40);
     myLives = new TextComponent("20px", "Consolas", 20, 70);
@@ -147,20 +148,19 @@ var myGameArea = {
         rightPressed = false;
         leftPressed = false;
         this.score = score;
-        //this.interval = setInterval(updateGameArea, 20);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         animate();
     },
-    // clear: function () {
-    //     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // },
     stop: function () {
+        //destroy all spawned parachutists
+        for (let parachutist of myParashutists){
+            myParashutists.shift();
+        }
         myStart = false;
         ctx.font = "20px Consolas";
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillText("END", canvas.width / 2, canvas.height / 2);
         ctx.fillText("Press ENTER to start again", 20, canvas.height - 20);
-
-        clearInterval(this.interval);
     }
 };
 
@@ -178,37 +178,38 @@ class TextComponent {
     };
 }
 
+// parent class for all images
 class Component {
-    constructor(x, y, src) {
+    constructor(width, height, x, y, src) {
+        this.width = width;
+        this.height = height;
         this.x = x;
         this.y = y;
         this.src = src;
     }
-
+    //redraw component
     update() {
         let img = new Image();
         img.src = this.src;
         ctx.drawImage(img, this.x, this.y);
     };
-
     //return current position of component
     getPos() {
         return this.x;
     };
+    move(){};
 }
 
 class Boat extends Component {
-    x;
-    y;
-
     constructor(width, height, x, y, src) {
-        super(x, y, src);
+        super(width, height, x, y, src);
         this.width = width;
         this.height = height;
         this.y = y;
         this.x = x;
     };
-    float() {
+    //boat can move right and left inside canvas
+    move() {
         if (rightPressed) {
             this.x += 5;
         }
@@ -219,67 +220,98 @@ class Boat extends Component {
             this.x = 1;
         } else if (this.x > canvas.width - this.width) {
             this.x = canvas.width - this.width;
-        } 
+        }
     };
 }
 
 class Plane extends Component {
-    x;
-    y;
     constructor(width, height, x, y, src) {
-        super(x, y, src);
+        super(width, height, x, y, src);
         this.width = width;
         this.height = height;
         this.x = x;
     };
-    fly() {
+    //plane can move from right to left inside canvas
+    move() {
         this.x--;
-        if (this.x <=-myPlaneWidth) {
-            this.x = x;
+        if (this.x <= - 50) {
+            this.x = 1000;
         }
     };
 }
 
 class Parachutist extends Component {
-    x;
-    y;
     constructor(width, height, x, y, src) {
         super(width, height, x, y, src);
         this.y = y;
         this.x = x;
     };
-    drop() {
-        if (this.y > (canvas.height - (myBoat.y + myBoatHeight/2))) {
+    //parachutist is dropped from plane position 
+    //and move till the level of water or boat
+    move() {
+        if (this.y > 400) {
             let boatPos = myBoat.getPos();
-            let parachutistPos = myParashutist.getPos();
-            if (parachutistPos < boatPos + myBoatWidth && parachutistPos >= boatPos) {
+            if (this.x < boatPos + myBoatWidth && this.x >= boatPos) {
                 score += 10;
+                myParashutists.shift();
             }
             else {
                 lives--;
+                myParashutists.shift();
             }
-            this.y = y;
-            this.x = myPlane.getPos();
-        } else {
-            this.y++;
         }
+        this.y++;
     };
 }
 
+//create new parachutist 
+function spawnParachutist(posPlane) {
+    return myParashutist = new Parachutist(
+        30,
+        30,
+        posPlane,
+        20,
+        "resources/parachutist.png"
+    );
+}
+
+//update random time to next spawned parachutist
+function updateRandomTime(){
+    randomTime = Math.floor(Math.random() * 10000);
+    //add 1000ms in case randomTime is rounded to 0
+    if (randomTime < 1000)
+        randomTime += 1000;
+}
 
 function animate() {
     if (lives <= 0 || !myStart) {
         myGameArea.stop();
         return;
     }
+    // get the elapsed time
+    var time = Date.now();
+
+    // check time to spawn a new parachutist   
+    if (time > lastSpawn + randomTime) {
+        lastSpawn = time;
+        var posPlane = myPlane.getPos();
+        if (posPlane > 60 && posPlane < 940) {
+            myParashutist = spawnParachutist(posPlane);
+            myParashutists.push(myParashutist);
+            updateRandomTime();
+        }
+    }
     requestAnimationFrame(animate);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    myBoat.float();
-    myPlane.fly();
-    myParashutist.drop();
-    for (const component of myComponents) {
+    for (var parachutist of myParashutists) {
+        parachutist.move();
+        parachutist.update();
+    }
+    for (var component of myComponents) {
+        component.move();
         component.update();
     }
+
     myScore.update("SCORE: ", score);
     myLives.update("LIVES: ", lives);
     myExit.update("Press ESC to quit", '');
