@@ -104,7 +104,7 @@ function keyUpHandler(e) {
 //create game's component and start game
 function startGame() {
 
-    mySea = new Component(
+    mySea = new MovingComponent(
         mySeaStartXPosition, mySeaStartYPosition,
         "resources/sea.png"
     );
@@ -168,7 +168,7 @@ class TextComponent {
 }
 
 // parent class for all images
-class Component {
+class MovingComponent {
     constructor(x, y, src) {
         this.x = x;
         this.y = y;
@@ -187,7 +187,7 @@ class Component {
     move(){};
 }
 
-class Boat extends Component {
+class Boat extends MovingComponent {
     constructor(x, y, src) {
         super(x, y, src);
         this.y = y;
@@ -211,7 +211,7 @@ class Boat extends Component {
     };
 }
 
-class Plane extends Component {
+class Plane extends MovingComponent {
     constructor(x, y, src) {
         super(x, y, src);
         this.x = x;
@@ -225,7 +225,7 @@ class Plane extends Component {
     };
 }
 
-class Parachutist extends Component {
+class Parachutist extends MovingComponent {
     constructor(x, y, src) {
         super(x, y, src);
         this.y = y;
