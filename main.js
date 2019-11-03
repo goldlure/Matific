@@ -5,10 +5,10 @@ let ctx = canvas.getContext("2d");
 //game's components
 let myComponents = [];
 let myBoat;
-let myBoatWidth = 230;
-let myBoatHeight = 140;
+const myBoatWidth = 230;
+const myBoatHeight = 140;
 let myPlane;
-let myPlaneWidth = 145;
+const myPlaneWidth = 145;
 let myParashutist;
 let myParashutists = [];
 let mySea;
