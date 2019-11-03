@@ -4,14 +4,27 @@ let ctx = canvas.getContext("2d");
 
 //game's components
 let myComponents = [];
+
 let myBoat;
 const myBoatWidth = 230;
-const myBoatHeight = 140;
+const myBoatStartXPosition = 500;
+const myBoatStartYPosition = 400;
+
 let myPlane;
 const myPlaneWidth = 145;
+const myPlaneStartXPosition = canvas.width;
+const myPlaneStartYPosition = 20;
+
 let myParashutist;
+const myParashutistWidth = 60;
+
 let myParashutists = [];
+
 let mySea;
+const mySeaStartXPosition = 0;
+const mySeaStartYPosition = 500;
+
+const textMargin = 20;
 
 // time of the last object spawned
 let lastSpawn = -1;
@@ -92,29 +105,26 @@ function keyUpHandler(e) {
 function startGame() {
 
     mySea = new Component(
-        0, 30,
-        0, 500,
+        mySeaStartXPosition, mySeaStartYPosition,
         "resources/sea.png"
     );
     myComponents.push(mySea);
 
     myBoat = new Boat(
-        myBoatWidth, myBoatHeight,
-        500, 400,
+        myBoatStartXPosition, myBoatStartYPosition,
         "resources/boat.png"
     );
     myComponents.push(myBoat);
 
     myPlane = new Plane(
-        30, 30,
-        900, 20,
+        myPlaneStartXPosition, myPlaneStartYPosition,
         "resources/plane.png"
     );
     myComponents.push(myPlane);
 
-    myScore = new TextComponent("20px", "Consolas", 20, 40);
-    myLives = new TextComponent("20px", "Consolas", 20, 70);
-    myExit = new TextComponent("20px", "Consolas", 20, canvas.height - 20);
+    myScore = new TextComponent("20px", "Consolas", textMargin, textMargin*2);
+    myLives = new TextComponent("20px", "Consolas", textMargin, textMargin*4);
+    myExit = new TextComponent("20px", "Consolas", textMargin, canvas.height - textMargin);
 
     myGameArea.start();
 }
@@ -159,9 +169,7 @@ class TextComponent {
 
 // parent class for all images
 class Component {
-    constructor(width, height, x, y, src) {
-        this.width = width;
-        this.height = height;
+    constructor(x, y, src) {
         this.x = x;
         this.y = y;
         this.src = src;
@@ -180,55 +188,53 @@ class Component {
 }
 
 class Boat extends Component {
-    constructor(width, height, x, y, src) {
-        super(width, height, x, y, src);
-        this.width = width;
-        this.height = height;
+    constructor(x, y, src) {
+        super(x, y, src);
         this.y = y;
         this.x = x;
     };
     //boat can move right and left inside canvas
     move() {
+        const velocity = 5;
         if (rightPressed) {
-            this.x += 5;
+            this.x += velocity;
         }
         else if (leftPressed) {
-            this.x -= 5;
+            this.x -= velocity;
         }
+        
         if (this.x <= 0) {
             this.x = 1;
-        } else if (this.x > canvas.width - this.width) {
-            this.x = canvas.width - this.width;
+        } else if (this.x > canvas.width - myBoatWidth) {
+            this.x = canvas.width - myBoatWidth;
         }
     };
 }
 
 class Plane extends Component {
-    constructor(width, height, x, y, src) {
-        super(width, height, x, y, src);
-        this.width = width;
-        this.height = height;
+    constructor(x, y, src) {
+        super(x, y, src);
         this.x = x;
     };
     //plane can move from right to left inside canvas
     move() {
         this.x--;
-        if (this.x <= - 50) {
-            this.x = 1000;
+        if (this.x <= -myPlaneWidth) {
+            this.x = myPlaneStartXPosition;
         }
     };
 }
 
 class Parachutist extends Component {
-    constructor(width, height, x, y, src) {
-        super(width, height, x, y, src);
+    constructor(x, y, src) {
+        super(x, y, src);
         this.y = y;
         this.x = x;
     };
     //parachutist is dropped from plane position 
     //and move till the level of water or boat
     move() {
-        if (this.y > 400) {
+        if (this.y > myBoatStartYPosition) {
             let boatPos = myBoat.getPos();
             if (this.x < boatPos + myBoatWidth && this.x >= boatPos) {
                 score += 10;
@@ -246,10 +252,8 @@ class Parachutist extends Component {
 //create new parachutist 
 function spawnParachutist(posPlane) {
     return myParashutist = new Parachutist(
-        30,
-        30,
         posPlane,
-        20,
+        myPlaneStartYPosition,
         "resources/parachutist.png"
     );
 }
@@ -274,7 +278,7 @@ function animate() {
     if (time > lastSpawn + randomTime) {
         lastSpawn = time;
         var posPlane = myPlane.getPos();
-        if (posPlane > 60 && posPlane < 940) {
+        if (posPlane > myParashutistWidth && posPlane < (canvas.width - myParashutistWidth)) {
             myParashutist = spawnParachutist(posPlane);
             myParashutists.push(myParashutist);
             updateRandomTime();
