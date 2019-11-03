@@ -1,41 +1,41 @@
 // init
-var canvas = document.getElementById("myCanvas");
-var ctx = canvas.getContext("2d");
+let canvas = document.getElementById("myCanvas");
+let ctx = canvas.getContext("2d");
 
 //game's components
-var myComponents = [];
-var myBoat;
-var myBoatWidth = 230;
-var myBoatHeight = 140;
-var myPlane;
-var myPlaneWidth = 145;
-var myParashutist;
-var myParashutists = [];
-var mySea;
+let myComponents = [];
+let myBoat;
+let myBoatWidth = 230;
+let myBoatHeight = 140;
+let myPlane;
+let myPlaneWidth = 145;
+let myParashutist;
+let myParashutists = [];
+let mySea;
 
 // time of the last object spawned
-var lastSpawn = -1;
+let lastSpawn = -1;
 
 // start time (used to calc elapsed time)
-var startTime = Date.now();
+let startTime = Date.now();
 
-var randomTime = 0;
+let randomTime = 0;
 
 //game's messages
-var myScore;
-var myLives;
-var myExit;
+let myScore;
+let myLives;
+let myExit;
 
 //default start counters
-var score = 0;
-var lives = 3;
+let score = 0;
+let lives = 3;
 
 //flag to check if game is alread started
-var myStart = true;
+let myStart = true;
 
 //keyboard's states
-var rightPressed = false;
-var leftPressed = false;
+let rightPressed = false;
+let leftPressed = false;
 
 // keyboard
 document.addEventListener("keydown", keyDownHandler, false);
@@ -66,20 +66,6 @@ function keyDownHandler(e) {
                 return;
         }
     }
-
-    if (e.keyCode == 39) {
-        rightPressed = true;
-    }
-    else if (e.keyCode == 37) {
-        leftPressed = true;
-    }
-    else if (e.keyCode == 27) {
-        myGameArea.stop();
-    }
-    else if (e.keyCode == 13) {
-        if (!myStart)
-            myGameArea.start();
-    }
 }
 function keyUpHandler(e) {
     if ("code" in e) {
@@ -99,13 +85,6 @@ function keyUpHandler(e) {
             default:
                 return;
         }
-    }
-
-    if (e.keyCode == 39) {
-        rightPressed = false;
-    }
-    else if (e.keyCode == 37) {
-        leftPressed = false;
     }
 }
 
@@ -140,7 +119,7 @@ function startGame() {
     myGameArea.start();
 }
 
-var myGameArea = {
+let myGameArea = {
     start: function () {
         myStart = true;
         score = 0;

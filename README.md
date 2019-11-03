@@ -1,7 +1,6 @@
 # Matific
 
-To solve:
-- random time to drop a parashutist - DONE
-- check if a parashutist is dropped inside a canvas - DONE
-- add comments - DONE
-- change buttons to keyboard - DONE
+to run the game install live-server
+$ npm install -g live-server
+and run it
+$ live-server
