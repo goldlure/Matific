@@ -54,6 +54,7 @@ let leftPressed = false;
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 function keyDownHandler(e) {
+    console.log(e);
     if ("code" in e) {
         switch (e.code) {
             case "Unidentified":
@@ -142,9 +143,7 @@ let myGameArea = {
     },
     stop: function () {
         //destroy all spawned parachutists
-        for (let parachutist of myParashutists){
-            myParashutists.shift();
-        }
+        myParashutists.length = 0;
         myStart = false;
         ctx.font = "20px Consolas";
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -237,13 +236,12 @@ class Parachutist extends MovingComponent {
         if (this.y > myBoatStartYPosition) {
             let boatPos = myBoat.getPos();
             if (this.x < boatPos + myBoatWidth && this.x >= boatPos) {
-                score += 10;
-                myParashutists.shift();
+                score += 10;  
             }
             else {
                 lives--;
-                myParashutists.shift();
             }
+            myParashutists.shift();
         }
         this.y++;
     };
