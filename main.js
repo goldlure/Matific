@@ -40,8 +40,8 @@ let myLives;
 let myExit;
 
 //default start counters
-let score = 0;
-let lives = 3;
+let score;
+let lives;
 
 //flag to check if game is alread started
 let myStart = true;
