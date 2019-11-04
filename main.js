@@ -54,7 +54,6 @@ let leftPressed = false;
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 function keyDownHandler(e) {
-    console.log(e);
     if ("code" in e) {
         switch (e.code) {
             case "Unidentified":
